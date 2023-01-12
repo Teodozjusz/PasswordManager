@@ -10,6 +10,7 @@
 struct entry {
     std::string name;
     std::string pass;
+    std::string category;
 };
 
 #endif //PASSWORDMANAGER_ENTRY_H

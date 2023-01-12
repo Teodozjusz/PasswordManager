@@ -11,11 +11,17 @@
 class Tui {
 public:
     void run();
-    void add();
-    void readDatabase();
 
 private:
     DatabaseConnector databaseConnector;
+
+    void add();
+    void listAll();
+    void listQuery();
+    void edit();
+    void remove();
+
+    void hold();
 };
 
 

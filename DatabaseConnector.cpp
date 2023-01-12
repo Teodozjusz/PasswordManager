@@ -74,21 +74,26 @@ std::vector<entry> DatabaseConnector::readAll() {
     return this->database;
 }
 
-entry DatabaseConnector::read(std::string name) {
-    return entry();
+std::vector<entry> DatabaseConnector::readQuery(std::string query) {
+    std::vector<entry> result;
+    for (entry e : database) {
+        if (e.name == query || e.category == query)
+            result.push_back(e);
+    }
+    return result;
 }
 
 void DatabaseConnector::add(entry entry) {
     database.push_back(entry);
 }
 
-void DatabaseConnector::remove(std::string) {
-//    database.
+void DatabaseConnector::remove(int index) {
+    database.erase(database.begin() + index);
 }
 
-int DatabaseConnector::find(std::string name) {
+int DatabaseConnector::findIndex(std::string query) {
     for (int i = 0; i < database.size(); ++i) {
-        if (database.at(i).name == name)
+        if (database.at(i).name == query || database.at(i).category == query)
             return i;
     }
     return -1;

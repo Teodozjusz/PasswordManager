@@ -16,14 +16,14 @@ public:
 public:
     void init(std::string databasePassword);
     bool open(std::string databasePassword);
-    entry read(std::string name);
+    std::vector<entry> readQuery(std::string query);
     std::vector<entry> readAll();
     void add(entry entry);
-    void remove(std::string);
+    void remove(int index);
     void close();
 private:
     std::vector<int> stringToVector(std::string str);
-    int find(std::string name);
+    int findIndex(std::string query);
 
     std::vector<entry> database;
     std::string databasePassword;
