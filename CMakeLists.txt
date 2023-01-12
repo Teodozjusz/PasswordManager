@@ -3,4 +3,4 @@ project(PasswordManager)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(PasswordManager main.cpp Endecryptor.cpp Endecryptor.h Tui.cpp Tui.h)
+add_executable(PasswordManager main.cpp Endecryptor.cpp Endecryptor.h Tui.cpp Tui.h DatabaseConnector.cpp DatabaseConnector.h entry.cpp entry.h)
