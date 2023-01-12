@@ -9,17 +9,18 @@
 #include "Endecryptor.h"
 #include "DateTime.h"
 
-unsigned int Endecryptor::calcSeed(std::string pass, Date* date) {
-    unsigned int seed = date->day + date->month + date->year;
+
+unsigned int Endecryptor::calcSeed(std::string pass, tm* date) {
+    unsigned int seed = date->tm_mday + date->tm_mon + date->tm_year + 1900;
     for (int i = 0; i < pass.size(); i++) {
         seed += pass[i];
     }
-    seed *= date->second % 10;
+    seed *= date->tm_sec % 10;
     return seed;
 }
 
 std::vector<int> Endecryptor::encrypt(
-        std::string toEncrypt, std::string pass, Date* date) {
+        std::string toEncrypt, std::string pass, tm* date) {
 
     std::vector<int> result(toEncrypt.size(), 0);
 
@@ -33,7 +34,7 @@ std::vector<int> Endecryptor::encrypt(
 }
 
 std::string Endecryptor::decrypt(
-        std::vector <int> toDecrypt, std::string pass, Date* date) {
+        std::vector <int> toDecrypt, std::string pass, tm* date) {
 
     std::string result = "";
     srand(calcSeed(pass, date));

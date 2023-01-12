@@ -14,11 +14,11 @@
 class Endecryptor {
 
 private:
-    unsigned int calcSeed(std::string pass, Date* date);
+    unsigned int calcSeed(std::string pass, tm* date);
 public:
-    std::vector<int> encrypt(std::string toEncrypt, std::string pass, Date* date);
+    std::vector<int> encrypt(std::string toEncrypt, std::string pass, tm* date);
 
-    std::string decrypt(std::vector<int> toDecrypt, std::string pass, Date* date);
+    std::string decrypt(std::vector<int> toDecrypt, std::string pass, tm* date);
 
 };
 
