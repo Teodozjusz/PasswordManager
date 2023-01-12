@@ -25,7 +25,7 @@ bool DatabaseConnector::open(std::string databasePassword) {
         std::string pass;
         for (int i = 0; i < 2; i++) {
             std::getline(databaseReader, s);
-            if (s.empty()) return;
+            if (s.empty()) return true;
             std::vector<int> line = this->stringToVector(s);
             switch (i) {
                 case 0:
