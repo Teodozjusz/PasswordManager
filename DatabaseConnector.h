@@ -14,6 +14,7 @@ public:
 
 
 public:
+    void init(std::string databasePassword);
     bool open(std::string databasePassword);
     entry read(std::string name);
     std::vector<entry> readAll();

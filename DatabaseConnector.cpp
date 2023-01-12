@@ -8,6 +8,25 @@
 #include "DatabaseConnector.h"
 #include "Endecryptor.h"
 
+void DatabaseConnector::init(std::string databasePassword) {
+    std::ofstream databaseWriter("database.txt");
+    std::time_t timestamp = std::time(nullptr);
+    databaseWriter << timestamp << std::endl;
+
+    tm* now = std::localtime(&timestamp);
+    Endecryptor endecryptor;
+    std::vector<int> controlSum = endecryptor.encrypt("69", databasePassword, now);
+    for (int i = 0; i < controlSum.size(); i++) {
+        databaseWriter << controlSum.at(i);
+        if (i < controlSum.size() - 1) {
+            databaseWriter << " ";
+        }
+    }
+    databaseWriter << std::endl;
+    this->open(databasePassword);
+
+}
+
 bool DatabaseConnector::open(std::string databasePassword) {
     this->databasePassword = databasePassword;
     database = std::vector<entry>();
@@ -19,6 +38,13 @@ bool DatabaseConnector::open(std::string databasePassword) {
     tm* timestamp = std::localtime(&unixTime);
 
     Endecryptor endecryptor;
+    std::string controlString;
+    getline(databaseReader, controlString);
+    std::vector controlVector = this->stringToVector(controlString);
+    std::string controlSum = endecryptor.decrypt(controlVector, databasePassword, timestamp);
+    if (controlSum != "69")
+        return false;
+
     std::string s;
     while (!databaseReader.eof()) {
         std::string name;
@@ -91,6 +117,15 @@ void DatabaseConnector::close() {
     tm* now = std::localtime(&timestamp);
     Endecryptor endecryptor;
 
+    std::vector<int> controlSum = endecryptor.encrypt("69", databasePassword, now);
+    for (int i = 0; i < controlSum.size(); i++) {
+        databaseWriter << controlSum.at(i);
+        if (i < controlSum.size() - 1) {
+            databaseWriter << " ";
+        }
+    }
+    databaseWriter << std::endl;
+
     for (entry e : database) {
         std::vector<int> toEncrypt = endecryptor.encrypt(e.name, this->databasePassword, now);
         for (int i = 0; i < toEncrypt.size(); i++) {
@@ -112,6 +147,8 @@ void DatabaseConnector::close() {
 
     }
 }
+
+
 
 
 
