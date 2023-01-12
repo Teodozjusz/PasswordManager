@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "Endecryptor.h"
-#include "DateTime.h"
 
 
 unsigned int Endecryptor::calcSeed(std::string pass, tm* date) {
