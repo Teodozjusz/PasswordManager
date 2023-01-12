@@ -4,7 +4,6 @@
 
 #include "Tui.h"
 #include <iostream>
-#include <ctime>
 #include <limits>
 
 #include "Endecryptor.h"
@@ -63,28 +62,8 @@ void Tui::add() {
     std::cin >> pass;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    Endecryptor endecryptor;
-    std::time_t time = std::time(nullptr);
-    tm* timestamp = std::localtime(&time);
-
-    std::cout << "Time: " << time << std::endl;
-
-    std::vector<int> encryptedName =
-            endecryptor.encrypt(name, "qwerty", timestamp);
-    std::cout << "Name: ";
-    for (int e : encryptedName) {
-        std::cout << e << " ";
-    }
-    std::cout << std::endl;
-
-    std::vector<int> encryptedPass = endecryptor.encrypt(pass, "qwerty", timestamp);
-    std::cout << "Pass: ";
-    for (int e : encryptedPass) {
-        std::cout << e << " ";
-    }
-    std::cout << std::endl;
-
-
+    entry newEntry = {name, pass};
+    databaseConnector.add(newEntry);
 
 }
 

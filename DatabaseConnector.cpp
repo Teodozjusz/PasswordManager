@@ -39,8 +39,9 @@ bool DatabaseConnector::open(std::string databasePassword) {
         }
         entry entry = {name, pass};
         database.push_back(entry);
-        return true;
+
     }
+    return true;
 }
 
 std::vector<entry> DatabaseConnector::readAll() {
