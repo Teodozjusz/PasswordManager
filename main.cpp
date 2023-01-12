@@ -1,17 +1,18 @@
 #include <iostream>
 #include <ctime>
 #include "Endecryptor.h"
+#include "Tui.h"
 
 int main() {
 
 //    std::time_t timestamp=std::time(nullptr);
 //    std::cout << timestamp << std::endl;
 //    tm* local=std::localtime(&timestamp);
-    //std::cout<<std::asctime(local)<<std::endl;
+//    std::cout<<std::asctime(local)<<std::endl;
 
-    std::time_t time = 1673519010;
-    tm* time1 = std::localtime(&time);
-    std::cout << time1->tm_hour << std::endl;
+//    std::time_t time = 1673519010;
+//    tm* time1 = std::localtime(&time);
+//    std::cout << time1->tm_hour << std::endl;
 
 //    Endecryptor endecryptor;
 //
@@ -36,5 +37,7 @@ int main() {
 //
 //    std::cout << "After: " << decrypted << std::endl;
 
+    Tui tui;
+    tui.run();
 
 }
