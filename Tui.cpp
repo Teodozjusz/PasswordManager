@@ -10,6 +10,10 @@
 #include "DatabaseConnector.h"
 
 namespace fs=std::filesystem;
+
+/**
+ * Method that starts the interface.
+ */
 void Tui::run() {
     fs::path path("database.txt");
     std::string databasePassword;
@@ -86,6 +90,9 @@ void Tui::run() {
     }
 }
 
+/**
+ * Method used to handle "Add new password" option.
+ */
 void Tui::add() {
     std::string category;
     std::string name;
@@ -120,7 +127,9 @@ void Tui::add() {
     this->hold();
 
 }
-
+/**
+ * Method used to handle "List database" option.
+ */
 void Tui::listAll() {
     std::vector<entry>* data = this->databaseConnector.readAll();
     for (const entry& e : *data) {
@@ -133,6 +142,9 @@ void Tui::listAll() {
 
 }
 
+/**
+ * Method used to handle "Search database" option.
+ */
 void Tui::listQuery() {
     std::string query;
     std::cout << "Query: ";
@@ -150,6 +162,9 @@ void Tui::listQuery() {
     this->hold();
 }
 
+/**
+ * Method used to handle "Remove password" option.
+ */
 void Tui::remove() {
     this->listAllShort();
     int index;
@@ -161,6 +176,9 @@ void Tui::remove() {
     this->hold();
 }
 
+/**
+ * Method used to handle "Remove category" option.
+ */
 void Tui::removeCategory() {
     this->listCategories();
     std::string category;
@@ -169,6 +187,9 @@ void Tui::removeCategory() {
     databaseConnector.removeCategory(category);
 }
 
+/**
+ * Method used to handle "Edit password" option.
+ */
 void Tui::edit() {
     this->listAllShort();
     std::vector<entry>* data = this->databaseConnector.readAll();
@@ -217,6 +238,11 @@ void Tui::edit() {
     this->hold();
 }
 
+/**
+ * Method used to determine how strong password user wants
+ * and execute method to generate it
+ * @return generated password
+ */
 std::string Tui::generatePassword() {
     int length;
     int strength;
@@ -244,6 +270,14 @@ std::string Tui::generatePassword() {
     }
 }
 
+/**
+ * Method that generates password using provided parameters
+ * @param length of wanted password
+ * @param bigLetters if password has to contain big letters
+ * @param specialChars if password has to contain special characters.
+ *                     Needs bigLetters set to true to work.
+ * @return generated password.
+ */
 std::string Tui::generatePasswordString(int length, bool bigLetters, bool specialChars) {
     std::string result;
     time_t time = std::time(nullptr);
@@ -263,6 +297,9 @@ std::string Tui::generatePasswordString(int length, bool bigLetters, bool specia
     return result;
 }
 
+/**
+ * Method that prints names of all entries in database in compact list
+ */
 void Tui::listAllShort() {
     std::vector<entry>* data = this->databaseConnector.readAll();
     for (int i = 0; i < data->size(); ++i) {
@@ -270,11 +307,17 @@ void Tui::listAllShort() {
     }
 }
 
+/**
+ * Method that holds program until pressing Enter key.
+ */
 void Tui::hold() {
     std::cout << "INFO: Press Enter to continue. ";
     std::cin.get();
 }
 
+/**
+ * Method that lists categories (5 per row).
+ */
 void Tui::listCategories() {
     std::vector<std::string> categories = databaseConnector.readCategories();
     std::cout << "Categories: ";

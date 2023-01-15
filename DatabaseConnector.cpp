@@ -9,6 +9,10 @@
 #include "DatabaseConnector.h"
 #include "Endecryptor.h"
 
+/**
+ * Method that creates new database file encrypted using given password.
+ * @param databasePassword used to encrypt database
+ */
 void DatabaseConnector::init(std::string databasePassword) {
     std::ofstream databaseWriter("database.txt");
     std::time_t timestamp = std::time(nullptr);
@@ -27,7 +31,11 @@ void DatabaseConnector::init(std::string databasePassword) {
     this->open(databasePassword);
 
 }
-
+/**
+ * Method that decrypts database and reads it to vector database.
+ * @param databasePassword used to decrypt database
+ * @return if decryption was successful
+ */
 bool DatabaseConnector::open(std::string databasePassword) {
     this->databasePassword = databasePassword;
     database = std::vector<entry>();
@@ -75,10 +83,18 @@ bool DatabaseConnector::open(std::string databasePassword) {
     return true;
 }
 
+/**
+ * @return whole database
+ */
 std::vector<entry>* DatabaseConnector::readAll() {
     return &this->database;
 }
 
+/**
+ * Returns only queries whose name or category matches query.
+ * @param query used to search
+ * @return entries matching query.
+ */
 std::vector<entry> DatabaseConnector::readQuery(std::string query) {
     std::vector<entry> result;
     std::transform(query.begin(), query.end(),query.begin(), ::tolower);
@@ -92,14 +108,25 @@ std::vector<entry> DatabaseConnector::readQuery(std::string query) {
     return result;
 }
 
+/**
+ * Adds new entry
+ * @param entry entry to add
+ */
 void DatabaseConnector::add(entry entry) {
     database.push_back(entry);
 }
 
+/**
+ * @param index of entry to remove
+ */
 void DatabaseConnector::remove(int index) {
     database.erase(database.begin() + index);
 }
 
+/**
+ * Removes every entry with given category.
+ * @param category to remove
+ */
 void DatabaseConnector::removeCategory(std::string category) {
     std::transform(category.begin(), category.end(), category.begin(), ::tolower);
     for (int i = 0; i < database.size(); i++) {
@@ -110,14 +137,11 @@ void DatabaseConnector::removeCategory(std::string category) {
     }
 }
 
-int DatabaseConnector::findIndex(std::string query) {
-    for (int i = 0; i < database.size(); ++i) {
-        if (database.at(i).name == query || database.at(i).category == query)
-            return i;
-    }
-    return -1;
-}
-
+/**
+ * Method that converts string in format "N N N..." where N is number from -200 to 200
+ * @param str input string
+ * @return vector of numbers read from string
+ */
 std::vector<int> DatabaseConnector::stringToVector(std::string str) {
     std::vector<int> result;
     std::string delimiter = " ";
@@ -134,6 +158,9 @@ std::vector<int> DatabaseConnector::stringToVector(std::string str) {
     return result;
 }
 
+/**
+ * Saves and encrypts database
+ */
 void DatabaseConnector::close() {
     std::ofstream databaseWriter("database.txt");
     std::time_t timestamp = std::time(nullptr);
@@ -181,6 +208,10 @@ void DatabaseConnector::close() {
     }
 }
 
+/**
+ * Scans database and returns every category
+ * @return vector containing every category in database
+ */
 std::vector<std::string> DatabaseConnector::readCategories() {
     std::vector<std::string> result;
     for (entry e : database) {
