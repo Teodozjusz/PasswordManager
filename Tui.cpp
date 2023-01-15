@@ -139,8 +139,8 @@ void Tui::add() {
 }
 
 void Tui::listAll() {
-    std::vector<entry> data = this->databaseConnector.readAll();
-    for (const entry& e : data) {
+    std::vector<entry>* data = this->databaseConnector.readAll();
+    for (const entry& e : *data) {
         std::cout << "======================" << std::endl;
         std::cout << "Name: " << e.name << std::endl;
         std::cout << "Password: " << e.pass << std::endl << std::endl;
@@ -166,10 +166,8 @@ void Tui::listQuery() {
 }
 
 void Tui::remove() {
-    std::vector<entry> data = this->databaseConnector.readAll();
-    for (int i = 0; i < data.size(); ++i) {
-        std::cout << i + 1 << ". " << data.at(i).name << std::endl;
-    }
+    this->listAllShort();
+    std::vector<entry>* data = this->databaseConnector.readAll();
     int index;
     std::cout << "Select element to delete > ";
     std::cin >> index;
@@ -179,7 +177,25 @@ void Tui::remove() {
 }
 
 void Tui::edit() {
+    this->listAllShort();
+    std::vector<entry>* data = this->databaseConnector.readAll();
 
+    int index;
+    std::string newName;
+    std::string newPass;
+    std::cout << "Select element to edit > ";
+    std::cin >> index;
+    entry* entry = &data->at(index - 1);
+    std::cout << "New name (Press Enter to keep "  << entry->name << ".) > ";
+    std::cin >> newName;
+    if ( !newName.empty() )
+        entry->name = newName;
+    std::cout << "New password (Press Enter to keep current) > ";
+    std::cin >> newPass;
+    if ( !newPass.empty() )
+        entry->pass = newPass;
+
+    std::cout << "INFO: Changes has been made." << std::endl;
 }
 
 std::string Tui::generatePassword(int length, bool bigLetters, bool specialChars) {
@@ -199,6 +215,13 @@ std::string Tui::generatePassword(int length, bool bigLetters, bool specialChars
         result.push_back(c);
     }
     return result;
+}
+
+void Tui::listAllShort() {
+    std::vector<entry>* data = this->databaseConnector.readAll();
+    for (int i = 0; i < data->size(); ++i) {
+        std::cout << i + 1 << ". " << data->at(i).name << std::endl;
+    }
 }
 
 void Tui::hold() {

@@ -21,7 +21,8 @@ private:
     void edit();
     void remove();
 
-    std::string generatePassword(int length, bool bigLetters, bool specialChars);
+    void listAllShort();
+    static std::string generatePassword(int length, bool bigLetters, bool specialChars);
     void hold();
 };
 

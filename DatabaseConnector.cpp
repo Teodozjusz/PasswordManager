@@ -70,8 +70,8 @@ bool DatabaseConnector::open(std::string databasePassword) {
     return true;
 }
 
-std::vector<entry> DatabaseConnector::readAll() {
-    return this->database;
+std::vector<entry>* DatabaseConnector::readAll() {
+    return &this->database;
 }
 
 std::vector<entry> DatabaseConnector::readQuery(std::string query) {
