@@ -138,16 +138,18 @@ void DatabaseConnector::remove(int index) {
  */
 void DatabaseConnector::removeCategory(std::string category) {
     std::transform(category.begin(), category.end(), category.begin(), ::tolower);
-    for (int i = 0; i < database.size(); i++) {
+    for (int i = database.size() - 1; i >= 0; i--) {
         std::string currCategory = database.at(i).category;
         std::transform(currCategory.begin(), currCategory.end(), currCategory.begin(), ::tolower);
-        if (database.at(i).category == category)
+        if (currCategory.compare(category) == 0) {
             database.erase(database.begin() + i);
+        }
+
     }
 }
 
 /**
- * Method that converts string in format "N N N..." where N is number from -200 to 200
+ * Method that converts string in format "N N N..." where N is integer number from -200 to 200
  * @param str input string
  * @return vector of numbers read from string
  */
