@@ -20,6 +20,7 @@ private:
     void listQuery();
     void edit();
     void remove();
+    void removeCategory();
 
     void listCategories();
     void listAllShort();

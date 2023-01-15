@@ -44,8 +44,7 @@ void Tui::run() {
         std::cout << "3. Add password" << std::endl;
         std::cout << "4. Edit password" << std::endl;
         std::cout << "5. Delete password" << std::endl;
-        std::cout << "6. Add category" << std::endl;
-        std::cout << "7. Delete category" << std::endl;
+        std::cout << "6. Delete category" << std::endl;
         std::cout << "9. Exit" << std::endl;
 
         std::cout << "> ";
@@ -71,6 +70,9 @@ void Tui::run() {
                 break;
             case 5:
                 this->remove();
+                break;
+            case 6:
+                this->removeCategory();
                 break;
             case 9:
                 stop = true;
@@ -159,6 +161,14 @@ void Tui::remove() {
     this->hold();
 }
 
+void Tui::removeCategory() {
+    this->listCategories();
+    std::string category;
+    std::cout << "Category to remove > ";
+    std::cin >> category;
+    databaseConnector.removeCategory(category);
+}
+
 void Tui::edit() {
     this->listAllShort();
     std::vector<entry>* data = this->databaseConnector.readAll();
@@ -167,7 +177,7 @@ void Tui::edit() {
     std::string newCategory;
     std::string newName;
     std::string newPass;
-    std::string generate;
+    char generate;
     std::cout << "Select element to edit (0 to cancel) > ";
     std::cin >> index;
     if (index == 0) return;
@@ -179,19 +189,21 @@ void Tui::edit() {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "New name [ " << entry->name << "] > ";
+    std::cout << "New name [" << entry->name << "] > ";
     std::cin >> entry->name;
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Do you want new password? [y/N] > ";
     std::cin >> generate;
-    if (generate == "y" || generate == "Y") {
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    if (generate == 'y' || generate == 'Y') {
         std::cout << "Generate new password? [Y/n] > ";
-        generate = std::cin.get();
+        std::cin >> generate;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        if (generate == "n" || generate == "N") {
+        if (generate == 'n' || generate == 'N') {
             std::cout << "New password > ";
             std::cin >> entry->pass;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -202,6 +214,7 @@ void Tui::edit() {
     }
 
     std::cout << "INFO: Changes has been made." << std::endl;
+    this->hold();
 }
 
 std::string Tui::generatePassword() {
@@ -235,7 +248,7 @@ std::string Tui::generatePasswordString(int length, bool bigLetters, bool specia
     std::string result;
     time_t time = std::time(nullptr);
     tm* now = std::localtime(&time);
-    srand(now->tm_hour * now->tm_sec + now->tm_year);
+    srand(now->tm_min * now->tm_sec + now->tm_mday);
     for (int i = 0; i < length; ++i) {
         char c;
         if (!bigLetters)
@@ -275,6 +288,8 @@ void Tui::listCategories() {
     std::cout << std::endl;
 
 }
+
+
 
 
 

@@ -21,6 +21,7 @@ public:
     std::vector<std::string> readCategories();
     void add(entry entry);
     void remove(int index);
+    void removeCategory(std::string category);
     void close();
 private:
     std::vector<int> stringToVector(std::string str);

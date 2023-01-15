@@ -100,6 +100,16 @@ void DatabaseConnector::remove(int index) {
     database.erase(database.begin() + index);
 }
 
+void DatabaseConnector::removeCategory(std::string category) {
+    std::transform(category.begin(), category.end(), category.begin(), ::tolower);
+    for (int i = 0; i < database.size(); i++) {
+        std::string currCategory = database.at(i).category;
+        std::transform(currCategory.begin(), currCategory.end(), currCategory.begin(), ::tolower);
+        if (database.at(i).category == category)
+            database.erase(database.begin() + i);
+    }
+}
+
 int DatabaseConnector::findIndex(std::string query) {
     for (int i = 0; i < database.size(); ++i) {
         if (database.at(i).name == query || database.at(i).category == query)
@@ -193,4 +203,6 @@ std::vector<std::string> DatabaseConnector::readCategories() {
 
     return result;
 }
+
+
 
