@@ -1,0 +1,2 @@
+To use example database change its name to database.txt and put it in the folder with th executable.
+Password: qwerty
