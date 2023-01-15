@@ -86,15 +86,50 @@ void Tui::run() {
 
 void Tui::add() {
     std::string name;
+    std::string generate;
     std::string pass;
 
     std::cout << "Name > ";
     std::cin >> name;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "Password > ";
-    std::cin >> pass;
+    std::cout << "Generate password? [Y/n] > ";
+    std::cin >> generate;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (generate == "n" || generate == "N") {
+        std::cout << "Password > ";
+        std::cin >> pass;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    else {
+        int length;
+        int strength;
+        std::cout << "How strong do you want your password?" << std::endl;
+        std::cout << "1. Only small letters" << std::endl;
+        std::cout << "2. Small and big letters" << std::endl;
+        std::cout << "3. Small and big letters + numbers + special characters" << std::endl;
+        std::cout << "> ";
+        std::cin >> strength;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::cout << "How long do you want your password? > ";
+        std::cin >> length;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        switch (strength) {
+            case 1:
+                pass = generatePassword(length, false, false);
+                break;
+            case 2:
+                pass = generatePassword(length, true, false);
+                break;
+            case 3:
+            default:
+                pass = generatePassword(length, true, true);
+                break;
+
+        }
+    }
 
     entry newEntry = {name, pass};
     databaseConnector.add(newEntry);
@@ -139,7 +174,7 @@ void Tui::remove() {
     std::cout << "Select element to delete > ";
     std::cin >> index;
     databaseConnector.remove(index - 1);
-    std::cout << "INFO: Element " << index << " removed.";
+    std::cout << "INFO: Element " << index << " removed." << std::endl;
     this->hold();
 }
 
@@ -147,7 +182,28 @@ void Tui::edit() {
 
 }
 
+std::string Tui::generatePassword(int length, bool bigLetters, bool specialChars) {
+    std::string result;
+    time_t time = std::time(nullptr);
+    tm* now = std::localtime(&time);
+    srand(now->tm_hour * now->tm_sec + now->tm_year);
+    for (int i = 0; i < length; ++i) {
+        char c;
+        if (!bigLetters)
+            c = rand() % 26 + 97;
+        else if (!specialChars)
+            c = rand() % 26 + 65 + (rand() % 2 * 32);
+        else
+            c = rand() % 94 + 33;
+
+        result.push_back(c);
+    }
+    return result;
+}
+
 void Tui::hold() {
     std::cout << "INFO: Press Enter to continue. ";
     std::cin.get();
 }
+
+
