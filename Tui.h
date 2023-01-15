@@ -21,8 +21,10 @@ private:
     void edit();
     void remove();
 
+    void listCategories();
     void listAllShort();
-    static std::string generatePassword(int length, bool bigLetters, bool specialChars);
+    std::string generatePassword();
+    static std::string generatePasswordString(int length, bool bigLetters, bool specialChars);
     void hold();
 };
 

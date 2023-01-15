@@ -18,6 +18,7 @@ public:
     bool open(std::string databasePassword);
     std::vector<entry> readQuery(std::string query);
     std::vector<entry>* readAll();
+    std::vector<std::string> readCategories();
     void add(entry entry);
     void remove(int index);
     void close();

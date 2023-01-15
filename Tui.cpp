@@ -85,53 +85,34 @@ void Tui::run() {
 }
 
 void Tui::add() {
+    std::string category;
     std::string name;
     std::string generate;
     std::string pass;
+
+    this->listCategories();
+    std::cout << "Category > ";
+    std::cin >> category;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Name > ";
     std::cin >> name;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Generate password? [Y/n] > ";
-    std::cin >> generate;
+    generate = std::cin.get();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     if (generate == "n" || generate == "N") {
         std::cout << "Password > ";
         std::cin >> pass;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     else {
-        int length;
-        int strength;
-        std::cout << "How strong do you want your password?" << std::endl;
-        std::cout << "1. Only small letters" << std::endl;
-        std::cout << "2. Small and big letters" << std::endl;
-        std::cout << "3. Small and big letters + numbers + special characters" << std::endl;
-        std::cout << "> ";
-        std::cin >> strength;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "How long do you want your password? > ";
-        std::cin >> length;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        switch (strength) {
-            case 1:
-                pass = generatePassword(length, false, false);
-                break;
-            case 2:
-                pass = generatePassword(length, true, false);
-                break;
-            case 3:
-            default:
-                pass = generatePassword(length, true, true);
-                break;
-
-        }
+        pass = generatePassword();
     }
 
-    entry newEntry = {name, pass};
+    entry newEntry = {name, pass, category};
     databaseConnector.add(newEntry);
     std::cout << "Element added." << std::endl;
     this->hold();
@@ -142,6 +123,7 @@ void Tui::listAll() {
     std::vector<entry>* data = this->databaseConnector.readAll();
     for (const entry& e : *data) {
         std::cout << "======================" << std::endl;
+        std::cout << "Category: " << e.category << std::endl;
         std::cout << "Name: " << e.name << std::endl;
         std::cout << "Password: " << e.pass << std::endl << std::endl;
     }
@@ -159,6 +141,7 @@ void Tui::listQuery() {
     }
     for (entry e : results) {
         std::cout << "======================" << std::endl;
+        std::cout << "Category: " << e.category << std::endl;
         std::cout << "Name: " << e.name << std::endl;
         std::cout << "Password: " << e.pass << std::endl << std::endl;
     }
@@ -167,10 +150,10 @@ void Tui::listQuery() {
 
 void Tui::remove() {
     this->listAllShort();
-    std::vector<entry>* data = this->databaseConnector.readAll();
     int index;
-    std::cout << "Select element to delete > ";
+    std::cout << "Select element to delete (0 to cancel) > ";
     std::cin >> index;
+    if (index == 0) return;
     databaseConnector.remove(index - 1);
     std::cout << "INFO: Element " << index << " removed." << std::endl;
     this->hold();
@@ -181,24 +164,74 @@ void Tui::edit() {
     std::vector<entry>* data = this->databaseConnector.readAll();
 
     int index;
+    std::string newCategory;
     std::string newName;
     std::string newPass;
-    std::cout << "Select element to edit > ";
+    std::string generate;
+    std::cout << "Select element to edit (0 to cancel) > ";
     std::cin >> index;
+    if (index == 0) return;
     entry* entry = &data->at(index - 1);
-    std::cout << "New name (Press Enter to keep "  << entry->name << ".) > ";
-    std::cin >> newName;
-    if ( !newName.empty() )
-        entry->name = newName;
-    std::cout << "New password (Press Enter to keep current) > ";
-    std::cin >> newPass;
-    if ( !newPass.empty() )
-        entry->pass = newPass;
+
+    this->listCategories();
+    std::cout << "New category [ " << entry->category << "] > ";
+    std::cin >> entry->category;
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "New name [ " << entry->name << "] > ";
+    std::cin >> entry->name;
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "Do you want new password? [y/N] > ";
+    std::cin >> generate;
+    if (generate == "y" || generate == "Y") {
+        std::cout << "Generate new password? [Y/n] > ";
+        generate = std::cin.get();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if (generate == "n" || generate == "N") {
+            std::cout << "New password > ";
+            std::cin >> entry->pass;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        else {
+            entry->pass = generatePassword();
+        }
+    }
 
     std::cout << "INFO: Changes has been made." << std::endl;
 }
 
-std::string Tui::generatePassword(int length, bool bigLetters, bool specialChars) {
+std::string Tui::generatePassword() {
+    int length;
+    int strength;
+    std::cout << "How strong do you want your password?" << std::endl;
+    std::cout << "1. Only small letters" << std::endl;
+    std::cout << "2. Small and big letters" << std::endl;
+    std::cout << "3. Small and big letters + numbers + special characters" << std::endl;
+    std::cout << "> ";
+    std::cin >> strength;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "How long do you want your password? > ";
+    std::cin >> length;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    switch (strength) {
+        case 1:
+            return generatePasswordString(length, false, false);
+        case 2:
+            return generatePasswordString(length, true, false);
+        case 3:
+        default:
+            return generatePasswordString(length, true, true);
+
+    }
+}
+
+std::string Tui::generatePasswordString(int length, bool bigLetters, bool specialChars) {
     std::string result;
     time_t time = std::time(nullptr);
     tm* now = std::localtime(&time);
@@ -228,5 +261,21 @@ void Tui::hold() {
     std::cout << "INFO: Press Enter to continue. ";
     std::cin.get();
 }
+
+void Tui::listCategories() {
+    std::vector<std::string> categories = databaseConnector.readCategories();
+    std::cout << "Categories: ";
+    for (int i = 0; i < categories.size(); ++i) {
+        std::cout << categories.at(i);
+        if (i % 5 == 0 && i > 0 && i != categories.size() - 1)
+            std::cout << ", " << std::endl;
+        else if ( i != categories.size() - 1 )
+            std::cout << ", ";
+    }
+    std::cout << std::endl;
+
+}
+
+
 
 

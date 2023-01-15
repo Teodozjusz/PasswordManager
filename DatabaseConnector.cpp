@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <ctime>
+#include <string>
 #include "DatabaseConnector.h"
 #include "Endecryptor.h"
 
@@ -49,7 +50,8 @@ bool DatabaseConnector::open(std::string databasePassword) {
     while (!databaseReader.eof()) {
         std::string name;
         std::string pass;
-        for (int i = 0; i < 2; i++) {
+        std::string category;
+        for (int i = 0; i < 3; i++) {
             std::getline(databaseReader, s);
             if (s.empty()) return true;
             std::vector<int> line = this->stringToVector(s);
@@ -60,10 +62,13 @@ bool DatabaseConnector::open(std::string databasePassword) {
                 case 1:
                     pass = endecryptor.decrypt(line, databasePassword, timestamp);
                     break;
+                case 2:
+                    category = endecryptor.decrypt(line, databasePassword, timestamp);
+                    break;
             }
 
         }
-        entry entry = {name, pass};
+        entry entry = {name, pass, category};
         database.push_back(entry);
 
     }
@@ -76,9 +81,13 @@ std::vector<entry>* DatabaseConnector::readAll() {
 
 std::vector<entry> DatabaseConnector::readQuery(std::string query) {
     std::vector<entry> result;
+    std::transform(query.begin(), query.end(),query.begin(), ::tolower);
     for (entry e : database) {
+        std::transform(e.name.begin(), e.name.end(), e.name.begin(), ::tolower);
+        std::transform(e.category.begin(), e.category.end(),e.category.begin(), ::tolower);
         if (e.name == query || e.category == query)
             result.push_back(e);
+
     }
     return result;
 }
@@ -150,13 +159,38 @@ void DatabaseConnector::close() {
         }
         databaseWriter << std::endl;
 
+        toEncrypt = endecryptor.encrypt(e.category, this->databasePassword, now);
+        for (int i = 0; i < toEncrypt.size(); i++) {
+            databaseWriter << toEncrypt.at(i);
+            if (i < toEncrypt.size() - 1) {
+                databaseWriter << " ";
+            }
+        }
+        databaseWriter << std::endl;
+
     }
 }
 
+std::vector<std::string> DatabaseConnector::readCategories() {
+    std::vector<std::string> result;
+    for (entry e : database) {
+        if (!result.empty()) {
+            bool isFound = false;
+            for (std::string category : result) {
+                if (category == e.category) {
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound)
+                result.push_back(e.category);
 
+        }
+        else
+            result.push_back(e.category);
 
+    }
 
-
-
-
+    return result;
+}
 
