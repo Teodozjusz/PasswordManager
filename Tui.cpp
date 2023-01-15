@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-msc50-cpp"
 //
 // Created by bytte on 12.01.2023.
 //
@@ -110,7 +112,7 @@ void Tui::add() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Generate password? [Y/n] > ";
-    generate = std::cin.get();
+    generate = std::to_string(std::cin.get());
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     if (generate == "n" || generate == "N") {
@@ -154,7 +156,7 @@ void Tui::listQuery() {
     if (results.empty()) {
         std::cout << "INFO: No results." << std::endl;
     }
-    for (entry e : results) {
+    for (const entry& e : results) {
         std::cout << "======================" << std::endl;
         std::cout << "Category: " << e.category << std::endl;
         std::cout << "Name: " << e.name << std::endl;
@@ -334,9 +336,4 @@ void Tui::listCategories() {
 
 }
 
-
-
-
-
-
-
+#pragma clang diagnostic pop

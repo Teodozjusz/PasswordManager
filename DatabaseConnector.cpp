@@ -11,16 +11,16 @@
 
 /**
  * Method that creates new database file encrypted using given password.
- * @param databasePassword used to encrypt database
+ * @param password used to encrypt database
  */
-void DatabaseConnector::init(std::string databasePassword) {
+void DatabaseConnector::init(const std::string& password) {
     std::ofstream databaseWriter("database.txt");
     std::time_t timestamp = std::time(nullptr);
     databaseWriter << timestamp << std::endl;
 
     tm* now = std::localtime(&timestamp);
     Endecryptor endecryptor;
-    std::vector<int> controlSum = endecryptor.encrypt("69", databasePassword, now);
+    std::vector<int> controlSum = endecryptor.encrypt("69", password, now);
     for (int i = 0; i < controlSum.size(); i++) {
         databaseWriter << controlSum.at(i);
         if (i < controlSum.size() - 1) {
@@ -28,16 +28,16 @@ void DatabaseConnector::init(std::string databasePassword) {
         }
     }
     databaseWriter << std::endl;
-    this->open(databasePassword);
+    this->open(password);
 
 }
 /**
  * Method that decrypts database and reads it to vector database.
- * @param databasePassword used to decrypt database
+ * @param password used to decrypt database
  * @return if decryption was successful
  */
-bool DatabaseConnector::open(std::string databasePassword) {
-    this->databasePassword = databasePassword;
+bool DatabaseConnector::open(const std::string& password) {
+    this->databasePassword = password;
     database = std::vector<entry>();
     std::ifstream databaseReader("database.txt");
 
@@ -50,7 +50,7 @@ bool DatabaseConnector::open(std::string databasePassword) {
     std::string controlString;
     getline(databaseReader, controlString);
     std::vector controlVector = this->stringToVector(controlString);
-    std::string controlSum = endecryptor.decrypt(controlVector, databasePassword, timestamp);
+    std::string controlSum = endecryptor.decrypt(controlVector, password, timestamp);
     if (controlSum != "69")
         return false;
 
@@ -63,15 +63,15 @@ bool DatabaseConnector::open(std::string databasePassword) {
             std::getline(databaseReader, s);
             if (s.empty()) return true;
             std::vector<int> line = this->stringToVector(s);
-            switch (i) {
+            switch (i) { // NOLINT(hicpp-multiway-paths-covered)
                 case 0:
-                    name = endecryptor.decrypt(line, databasePassword, timestamp);
+                    name = endecryptor.decrypt(line, password, timestamp);
                     break;
                 case 1:
-                    pass = endecryptor.decrypt(line, databasePassword, timestamp);
+                    pass = endecryptor.decrypt(line, password, timestamp);
                     break;
                 case 2:
-                    category = endecryptor.decrypt(line, databasePassword, timestamp);
+                    category = endecryptor.decrypt(line, password, timestamp);
                     break;
             }
 
@@ -121,7 +121,7 @@ std::vector<entry> DatabaseConnector::readQuery(std::string query) {
  * Adds new entry
  * @param entry entry to add
  */
-void DatabaseConnector::add(entry entry) {
+void DatabaseConnector::add(const entry& entry) {
     database.push_back(entry);
 }
 
@@ -151,7 +151,7 @@ void DatabaseConnector::removeCategory(std::string category) {
  * @param str input string
  * @return vector of numbers read from string
  */
-std::vector<int> DatabaseConnector::stringToVector(std::string str) {
+std::vector<int> DatabaseConnector::stringToVector(const std::string& str) {
     std::vector<int> result;
     std::string delimiter = " ";
     size_t start = 0;
@@ -186,7 +186,7 @@ void DatabaseConnector::close() {
     }
     databaseWriter << std::endl;
 
-    for (entry e : database) {
+    for (const entry& e : database) {
         std::vector<int> toEncrypt = endecryptor.encrypt(e.name, this->databasePassword, now);
         for (int i = 0; i < toEncrypt.size(); i++) {
             databaseWriter << toEncrypt.at(i);
@@ -223,10 +223,10 @@ void DatabaseConnector::close() {
  */
 std::vector<std::string> DatabaseConnector::readCategories() {
     std::vector<std::string> result;
-    for (entry e : database) {
+    for (const entry& e : database) {
         if (!result.empty()) {
             bool isFound = false;
-            for (std::string category : result) {
+            for (const std::string& category : result) {
                 if (category == e.category) {
                     isFound = true;
                     break;

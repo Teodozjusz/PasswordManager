@@ -24,7 +24,7 @@ private:
 
     void listCategories();
     void listAllShort();
-    std::string generatePassword();
+    static std::string generatePassword();
     static std::string generatePasswordString(int length, bool bigLetters, bool specialChars);
     void hold();
 };

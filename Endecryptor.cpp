@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-msc50-cpp"
 //
 // Created by bytte on 12.01.2023.
 //
@@ -14,10 +16,10 @@
  * @param date given timestamp
  * @return seed
  */
-unsigned int Endecryptor::calcSeed(std::string pass, tm* date) {
+unsigned int Endecryptor::calcSeed(const std::string& pass, tm* date) {
     unsigned int seed = date->tm_mday + date->tm_mon + date->tm_year + 1900;
-    for (int i = 0; i < pass.size(); i++) {
-        seed += pass[i];
+    for (char c : pass) {
+        seed += c;
     }
     seed *= date->tm_sec % 10;
     return seed;
@@ -31,7 +33,7 @@ unsigned int Endecryptor::calcSeed(std::string pass, tm* date) {
  * @return vector containing encrypted string
  */
 std::vector<int> Endecryptor::encrypt(
-        std::string toEncrypt, std::string pass, tm* date) {
+        std::string toEncrypt, const std::string& pass, tm* date) {
 
     std::vector<int> result(toEncrypt.size(), 0);
 
@@ -52,15 +54,17 @@ std::vector<int> Endecryptor::encrypt(
  * @return decrypted string
  */
 std::string Endecryptor::decrypt(
-        std::vector <int> toDecrypt, std::string pass, tm* date) {
+        const std::vector <int>& toDecrypt, const std::string& pass, tm* date) {
 
-    std::string result = "";
+    std::string result;
     srand(calcSeed(pass, date));
 
-    for (int i = 0; i < toDecrypt.size(); i++) {
+    for (int i : toDecrypt) {
         int offset = rand() % 200 - 100;
-        result.push_back(toDecrypt.at(i) - offset);
+        result.push_back(i - offset);
     }
 
     return result;
 }
+
+#pragma clang diagnostic pop
