@@ -84,9 +84,18 @@ bool DatabaseConnector::open(std::string databasePassword) {
 }
 
 /**
- * @return whole database
+ * Sorts database alphabetically on categories and names and returns pointer to it.
+ * @return pointer to database
  */
 std::vector<entry>* DatabaseConnector::readAll() {
+    std::sort(database.begin(), database.end(),
+              [](const entry &a, const entry &b) -> bool {
+        return a.name < b.name;
+    });
+    std::sort(database.begin(), database.end(),
+              [](const entry &a, const entry &b) -> bool {
+                  return a.category < b.category;
+              });
     return &this->database;
 }
 

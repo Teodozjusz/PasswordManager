@@ -44,7 +44,7 @@ void Tui::run() {
         std::cout << "Nameless Password Manager by Adam Bem" << std::endl;
         std::cout << "=====================================" << std::endl;
         std::cout << "1. Search database" << std::endl;
-        std::cout << "2. List sorted database" << std::endl;
+        std::cout << "2. List database" << std::endl;
         std::cout << "3. Add password" << std::endl;
         std::cout << "4. Edit password" << std::endl;
         std::cout << "5. Delete password" << std::endl;
@@ -100,6 +100,7 @@ void Tui::add() {
     std::string pass;
 
     this->listCategories();
+    std::cout << "You can also something else to create new category." << std::endl;
     std::cout << "Category > ";
     std::cin >> category;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -205,7 +206,8 @@ void Tui::edit() {
     entry* entry = &data->at(index - 1);
 
     this->listCategories();
-    std::cout << "New category [ " << entry->category << "] > ";
+    std::cout << "You can also something else to create new category." << std::endl;
+    std::cout << "New category [" << entry->category << "] > ";
     std::cin >> entry->category;
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -331,6 +333,7 @@ void Tui::listCategories() {
     std::cout << std::endl;
 
 }
+
 
 
 
